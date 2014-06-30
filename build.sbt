@@ -1,16 +1,31 @@
 name := "mois-sbt"
 
-sbtPlugin := true
-
 organization := "uk.ac.ed.inf"
 
 version := "1.99.2-SNAPSHOT"
 
-scalaVersion := "2.10.4"
+scalaVersion := "2.11.1"
 
+crossScalaVersions := Seq("2.11.1", "2.10.4")
+
+// For mois
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
+// For SBT
+resolvers += "Typesafe Simple Repository" at "http://repo.typesafe.com/typesafe/simple/maven-releases/"
+
 libraryDependencies += "uk.ac.ed.inf" %% "mois" % "1.99.2-SNAPSHOT"
+
+libraryDependencies += "org.scala-sbt" % "command" % "0.13.5"
+
+libraryDependencies := {
+  CrossVersion.partialVersion(scalaVersion.value) match {
+    case Some((2, scalaMajor)) if scalaMajor >= 11 =>
+      libraryDependencies.value :+ "org.scala-lang.modules" %% "scala-xml" % "1.0.2"
+    case _ =>
+      libraryDependencies.value
+  }
+}
 
 publishTo := {
   val nexus = "https://oss.sonatype.org/"
