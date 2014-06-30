@@ -14,7 +14,7 @@ abstract class MoisMain extends xsbti.AppMain
 
   def initialState(configuration: xsbti.AppConfiguration): State = {
     val commandDefinitions = evolve +: BasicCommands.allBasicCommands
-    val commandsToRun = Evolve +: "iflast shell" +: configuration.arguments.map(_.trim)
+    val commandsToRun = "iflast shell" +: configuration.arguments.map(_.trim)
 
     State(configuration, commandDefinitions, Set.empty, None, commandsToRun, State.newHistory,
           AttributeMap.empty, initialGlobalLogging, State.Continue)
@@ -22,8 +22,10 @@ abstract class MoisMain extends xsbti.AppMain
 
   val Evolve = "evolve"
   val evolve = Command.command(Evolve) { s =>
+    s.log.info(s"setting initial conditions")
     process.state <<< state
     s.log.info(s"initial state ${process}")
+    s.log.info(s"running...")
     s.log.info(s"delta ${process(0, 50)}")
     s.log.info(s"final state ${process}")
     s
