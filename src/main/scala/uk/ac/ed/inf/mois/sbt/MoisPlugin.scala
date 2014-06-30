@@ -4,15 +4,16 @@ import sbt._
 import Keys._
 
 object MoisPlugin extends AutoPlugin {
-  override lazy val projectSettings = Seq(commands += mois)
-
-  // n.b we should do something better here, like check if
-  // mois is in libraryDependencies
-  override def trigger = allRequirements
-
-  lazy val mois =
-    Command.command("mois") { (state: State) =>
-      println("hello world")
-      state
+  object autoImport {
+    lazy val mois = inputKey[Unit]("foo bar baz")
+    lazy val moisSettings: Seq[Def.Setting[_]] = Seq(
+      mois := {
+	val log = streams.value.log
+	log.info("hello world")
+      }
+    )
   }
+  import autoImport._
+  override def trigger = allRequirements
+  override val projectSettings = moisSettings
 }
